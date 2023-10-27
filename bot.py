@@ -1,3 +1,5 @@
+import logging
+
 from aiogram import Bot, Dispatcher, F
 from aiogram.filters import Command, CommandStart, StateFilter
 from aiogram.fsm.context import FSMContext
@@ -6,6 +8,8 @@ from aiogram.fsm.storage.memory import MemoryStorage
 from aiogram.types import (CallbackQuery, InlineKeyboardButton,
                            InlineKeyboardMarkup, Message, PhotoSize)
 
+from config_data.config import Config, load_config
+
 # Вместо BOT TOKEN HERE нужно вставить токен вашего бота,
 # полученный у @BotFather
 BOT_TOKEN = 'BOT TOKEN HERE'
@@ -13,8 +17,7 @@ BOT_TOKEN = 'BOT TOKEN HERE'
 # Инициализируем хранилище (создаем экземпляр класса MemoryStorage)
 storage = MemoryStorage()
 
-# Создаем объекты бота и диспетчера
-bot = Bot(BOT_TOKEN)
+logger = logging.getLogger(__name__)
 dp = Dispatcher(storage=storage)
 
 # Создаем "базу данных" пользователей
@@ -339,4 +342,19 @@ async def send_echo(message: Message):
 
 # Запускаем поллинг
 if __name__ == '__main__':
+    # Конфигурируем логирование
+    logging.basicConfig(
+        level=logging.INFO,
+        format='%(filename)s:%(lineno)d #%(levelname)-8s '
+               '[%(asctime)s] - %(name)s - %(message)s')
+
+    # Выводим в консоль информацию о начале запуска бота
+    logger.info('Starting bot')
+
+    # Загружаем конфиг в переменную config
+    config: Config = load_config()
+
+    # Инициализируем бот и диспетчер
+    bot = Bot(token=config.tg_bot.token,parse_mode='MarkdownV2')
+
     dp.run_polling(bot)
