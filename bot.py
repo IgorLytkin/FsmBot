@@ -355,6 +355,6 @@ if __name__ == '__main__':
     config: Config = load_config()
 
     # Инициализируем бот и диспетчер
-    bot = Bot(token=config.tg_bot.token,parse_mode='MarkdownV2')
+    bot = Bot(token=config.tg_bot.token, parse_mode='MarkdownV2')
 
     dp.run_polling(bot)
