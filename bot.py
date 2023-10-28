@@ -240,7 +240,7 @@ async def process_education_press(callback: CallbackQuery, state: FSMContext):
         callback_data='yes_news'
     )
     no_news_button = InlineKeyboardButton(
-        text='Нет, спасибо',
+        text='Нет',
         callback_data='no_news')
     # Добавляем кнопки в клавиатуру в один ряд
     keyboard: list[list[InlineKeyboardButton]] = [
