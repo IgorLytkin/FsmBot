@@ -162,7 +162,7 @@ async def process_gender_press(callback: CallbackQuery, state: FSMContext):
     # чтобы у пользователя не было желания тыкать кнопки
     await callback.message.delete()
     await callback.message.answer(
-        text='Спасибо. А теперь загрузите, пожалуйста, ваше фото'
+        text='Спасибо\nА теперь загрузите, пожалуйста, ваше фото'
     )
     # Устанавливаем состояние ожидания загрузки фото
     await state.set_state(FSMFillForm.upload_photo)
