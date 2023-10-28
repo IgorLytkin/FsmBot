@@ -251,7 +251,7 @@ async def process_education_press(callback: CallbackQuery, state: FSMContext):
     # Редактируем предыдущее сообщение с кнопками, отправляя
     # новый текст и новую клавиатуру
     await callback.message.edit_text(
-        text='Спасибо\n\nОстался последний шаг.\n'
+        text='Спасибо\n\nОстался последний шаг\n'
              'Хотели бы вы получать новости?',
         reply_markup=markup
     )
@@ -283,7 +283,7 @@ async def process_wish_news_press(callback: CallbackQuery, state: FSMContext):
     await state.clear()
     # Отправляем в чат сообщение о выходе из машины состояний
     await callback.message.edit_text(
-        text='Спасибо. Ваши данные сохранены.\n\n'
+        text='Ваши данные сохранены\n\n'
              'Вы вышли из машины состояний'
     )
     # Отправляем в чат сообщение с предложением посмотреть свою анкету
