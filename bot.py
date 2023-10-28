@@ -43,8 +43,7 @@ class FSMFillForm(StatesGroup):
 async def process_start_command(message: Message):
     await message.answer(
         text='Этот бот демонстрирует работу FSM\n\n'
-             'Чтобы перейти к заполнению анкеты - '
-             'отправьте команду /fillform'
+             'Чтобы перейти к заполнению анкеты отправьте команду /fillform'
     )
 
 
@@ -87,7 +86,7 @@ async def process_fillform_command(message: Message, state: FSMContext):
 async def process_name_sent(message: Message, state: FSMContext):
     # Cохраняем введенное имя в хранилище по ключу "name"
     await state.update_data(name=message.text)
-    await message.answer(text='Спасибо!\n\nА теперь введите ваш возраст')
+    await message.answer(text='Спасибо\n\nА теперь введите ваш возраст')
     # Устанавливаем состояние ожидания ввода возраста
     await state.set_state(FSMFillForm.fill_age)
 
