@@ -333,7 +333,24 @@ async def process_showdata_command(message: Message):
 async def send_echo(message: Message):
     await message.reply(text='Извините, моя твоя не понимать')
 
+# Создаем асинхронную функцию
+async def set_main_menu(bot: Bot):
 
+    # Создаем список с командами и их описанием для кнопки menu
+    main_menu_commands = [
+        BotCommand(command='/help',
+                   description='Справка по работе бота'),
+        BotCommand(command='/support',
+                   description='Поддержка'),
+        BotCommand(command='/contacts',
+                   description='Другие способы связи'),
+        BotCommand(command='/start',
+                   description='Старт работы')
+        BotCommand(command='/fillform',
+                   description='Заполнить анкету')
+    ]
+
+    await bot.set_my_commands(main_menu_commands)
 # Запускаем поллинг
 if __name__ == '__main__':
     # Конфигурируем логирование
@@ -350,5 +367,8 @@ if __name__ == '__main__':
 
     # Инициализируем бот и диспетчер
     bot = Bot(token=config.tg_bot.token, parse_mode='MarkdownV2')
+
+    # Регистрируем асинхронную функцию в диспетчере,которая будет выполняться на старте бота
+    dp.startup.register(set_main_menu)
 
     dp.run_polling(bot)
