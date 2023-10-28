@@ -4,18 +4,22 @@ from aiogram import Bot, Dispatcher, F
 from aiogram.filters import Command, CommandStart, StateFilter
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import default_state, State, StatesGroup
-from aiogram.fsm.storage.memory import MemoryStorage
+# from aiogram.fsm.storage.memory import MemoryStorage
+from aiogram.fsm.storage.redis import RedisStorage, Redis
+
 from aiogram.types import (CallbackQuery, InlineKeyboardButton,
                            InlineKeyboardMarkup, Message, PhotoSize)
 
 from config_data.config import Config, load_config
 
 # Вместо BOT TOKEN HERE нужно вставить токен вашего бота,
-# полученный у @BotFather
+    # полученный у @BotFather
 BOT_TOKEN = 'BOT TOKEN HERE'
+redis = Redis(host='localhost')
 
 # Инициализируем хранилище (создаем экземпляр класса MemoryStorage)
-storage = MemoryStorage()
+# storage = MemoryStorage()
+storage = RedisStorage(redis=redis)
 
 logger = logging.getLogger(__name__)
 dp = Dispatcher(storage=storage)
@@ -334,7 +338,7 @@ async def send_echo(message: Message):
 if __name__ == '__main__':
     # Конфигурируем логирование
     logging.basicConfig(
-        level=logging.INFO,
+        level=logging.DEBUG,
         format='%(filename)s:%(lineno)d #%(levelname)-8s '
                '[%(asctime)s] - %(name)s - %(message)s')
 
