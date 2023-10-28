@@ -53,7 +53,7 @@ async def process_start_command(message: Message):
 async def process_cancel_command(message: Message):
     await message.answer(
         text='Отменять нечего. Вы вне машины состояний\n\n'
-             'Чтобы перейти к заполнению анкеты \- отправьте команду /fillform'
+             'Чтобы перейти к заполнению анкеты отправьте команду /fillform'
     )
 
 
@@ -63,7 +63,7 @@ async def process_cancel_command(message: Message):
 async def process_cancel_command_state(message: Message, state: FSMContext):
     await message.answer(
         text='Вы вышли из машины состояний\n\n'
-             'Чтобы снова перейти к заполнению анкеты \- отправьте команду /fillform'
+             'Чтобы снова перейти к заполнению анкеты отправьте команду /fillform'
     )
     # Сбрасываем состояние и очищаем данные, полученные внутри состояний
     await state.clear()
@@ -73,7 +73,7 @@ async def process_cancel_command_state(message: Message, state: FSMContext):
 # и переводить бота в состояние ожидания ввода имени
 @dp.message(Command(commands='fillform'), StateFilter(default_state))
 async def process_fillform_command(message: Message, state: FSMContext):
-    await message.answer(text='Пожалуйста\, введите ваше имя')
+    await message.answer(text='Пожалуйста, введите ваше имя')
     # Устанавливаем состояние ожидания ввода имени
     await state.set_state(FSMFillForm.fill_name)
 
@@ -94,9 +94,9 @@ async def process_name_sent(message: Message, state: FSMContext):
 @dp.message(StateFilter(FSMFillForm.fill_name))
 async def warning_not_name(message: Message):
     await message.answer(
-        text='То\, что вы отправили не похоже на имя\n\n'
-             'Пожалуйста\, введите ваше имя\n\n'
-             'Если вы хотите прервать заполнение анкеты \- отправьте команду /cancel'
+        text='То, что вы отправили не похоже на имя\n\n'
+             'Пожалуйста, введите ваше имя\n\n'
+             'Если вы хотите прервать заполнение анкеты отправьте команду /cancel'
     )
 
 
@@ -143,7 +143,7 @@ async def warning_not_age(message: Message):
     await message.answer(
         text='Возраст должен быть целым числом от 4 до 120\n\n'
              'Попробуйте еще раз\n\nЕсли вы хотите прервать '
-             'заполнение анкеты \- отправьте команду /cancel'
+             'заполнение анкеты отправьте команду /cancel'
     )
 
 
@@ -159,7 +159,7 @@ async def process_gender_press(callback: CallbackQuery, state: FSMContext):
     # чтобы у пользователя не было желания тыкать кнопки
     await callback.message.delete()
     await callback.message.answer(
-        text='Спасибо\nА теперь загрузите\, пожалуйста\, ваше фото'
+        text='Спасибо\nА теперь загрузите, пожалуйста, ваше фото'
     )
     # Устанавливаем состояние ожидания загрузки фото
     await state.set_state(FSMFillForm.upload_photo)
@@ -171,7 +171,7 @@ async def process_gender_press(callback: CallbackQuery, state: FSMContext):
 async def warning_not_gender(message: Message):
     await message.answer(
         text='Пожалуйста, пользуйтесь кнопками при выборе пола\n\n'
-             'Если вы хотите прервать заполнение анкеты \- отправьте команду /cancel'
+             'Если вы хотите прервать заполнение анкеты отправьте команду /cancel'
     )
 
 
