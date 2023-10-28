@@ -132,7 +132,7 @@ async def process_age_sent(message: Message, state: FSMContext):
     markup = InlineKeyboardMarkup(inline_keyboard=keyboard)
     # Отправляем пользователю сообщение с клавиатурой
     await message.answer(
-        text='Спасибо!\n\nУкажите ваш пол',
+        text='Спасибо\n\nУкажите ваш пол',
         reply_markup=markup
     )
     # Устанавливаем состояние ожидания выбора пола
@@ -162,7 +162,7 @@ async def process_gender_press(callback: CallbackQuery, state: FSMContext):
     # чтобы у пользователя не было желания тыкать кнопки
     await callback.message.delete()
     await callback.message.answer(
-        text='Спасибо! А теперь загрузите, пожалуйста, ваше фото'
+        text='Спасибо. А теперь загрузите, пожалуйста, ваше фото'
     )
     # Устанавливаем состояние ожидания загрузки фото
     await state.set_state(FSMFillForm.upload_photo)
@@ -214,7 +214,7 @@ async def process_photo_sent(message: Message,
     markup = InlineKeyboardMarkup(inline_keyboard=keyboard)
     # Отправляем пользователю сообщение с клавиатурой
     await message.answer(
-        text='Спасибо!\n\nУкажите ваше образование',
+        text='Спасибо\n\nУкажите ваше образование',
         reply_markup=markup
     )
     # Устанавливаем состояние ожидания выбора образования
@@ -256,7 +256,7 @@ async def process_education_press(callback: CallbackQuery, state: FSMContext):
     # Редактируем предыдущее сообщение с кнопками, отправляя
     # новый текст и новую клавиатуру
     await callback.message.edit_text(
-        text='Спасибо!\n\nОстался последний шаг.\n'
+        text='Спасибо\n\nОстался последний шаг.\n'
              'Хотели бы вы получать новости?',
         reply_markup=markup
     )
@@ -289,7 +289,7 @@ async def process_wish_news_press(callback: CallbackQuery, state: FSMContext):
     await state.clear()
     # Отправляем в чат сообщение о выходе из машины состояний
     await callback.message.edit_text(
-        text='Спасибо! Ваши данные сохранены!\n\n'
+        text='Спасибо. Ваши данные сохранены.\n\n'
              'Вы вышли из машины состояний'
     )
     # Отправляем в чат сообщение с предложением посмотреть свою анкету
@@ -304,7 +304,7 @@ async def process_wish_news_press(callback: CallbackQuery, state: FSMContext):
 @dp.message(StateFilter(FSMFillForm.fill_wish_news))
 async def warning_not_wish_news(message: Message):
     await message.answer(
-        text='Пожалуйста, воспользуйтесь кнопками!\n\n'
+        text='Пожалуйста, воспользуйтесь кнопками\n\n'
              'Если вы хотите прервать заполнение анкеты - '
              'отправьте команду /cancel'
     )
