@@ -228,7 +228,7 @@ async def warning_not_photo(message: Message):
     await message.answer(
         text='Пожалуйста, на этом шаге отправьте '
              'ваше фото\n\nЕсли вы хотите прервать '
-             'заполнение анкеты - отправьте команду /cancel'
+             'заполнение анкеты отправьте команду /cancel'
     )
 
 
@@ -270,7 +270,7 @@ async def process_education_press(callback: CallbackQuery, state: FSMContext):
 async def warning_not_education(message: Message):
     await message.answer(
         text='Пожалуйста, пользуйтесь кнопками при выборе образования\n\n'
-             'Если вы хотите прервать заполнение анкеты - отправьте '
+             'Если вы хотите прервать заполнение анкеты отправьте '
              'команду /cancel'
     )
 
@@ -294,8 +294,7 @@ async def process_wish_news_press(callback: CallbackQuery, state: FSMContext):
     )
     # Отправляем в чат сообщение с предложением посмотреть свою анкету
     await callback.message.answer(
-        text='Чтобы посмотреть данные вашей '
-             'анкеты - отправьте команду /showdata'
+        text='Чтобы посмотреть данные вашей анкеты отправьте команду /showdata'
     )
 
 
@@ -326,8 +325,7 @@ async def process_showdata_command(message: Message):
     else:
         # Если анкеты пользователя в базе нет - предлагаем заполнить
         await message.answer(
-            text='Вы еще не заполняли анкету. Чтобы приступить - '
-            'отправьте команду /fillform'
+            text='Вы еще не заполняли анкету. Чтобы приступить отправьте команду /fillform'
         )
 
 
