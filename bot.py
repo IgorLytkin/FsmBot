@@ -305,8 +305,7 @@ async def process_wish_news_press(callback: CallbackQuery, state: FSMContext):
 async def warning_not_wish_news(message: Message):
     await message.answer(
         text='Пожалуйста, воспользуйтесь кнопками\n\n'
-             'Если вы хотите прервать заполнение анкеты - '
-             'отправьте команду /cancel'
+             'Если вы хотите прервать заполнение анкеты отправьте команду /cancel'
     )
 
 
