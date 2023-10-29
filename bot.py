@@ -17,8 +17,7 @@ from config_data.config import Config, load_config
     # полученный у @BotFather
 BOT_TOKEN = 'BOT TOKEN HERE'
 
-# Перед запуском бота запустить ssh-туннель до singularity.lytkins.ru:6379!
-redis = Redis(host='localhost',port=63790)
+redis = Redis(host='localhost',port=6379)
 
 # Инициализируем хранилище (создаем экземпляр класса MemoryStorage)
 # storage = MemoryStorage()
