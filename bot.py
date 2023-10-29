@@ -16,7 +16,7 @@ from config_data.config import Config, load_config
 # Вместо BOT TOKEN HERE нужно вставить токен вашего бота,
     # полученный у @BotFather
 BOT_TOKEN = 'BOT TOKEN HERE'
-redis = Redis(host='localhost')
+redis = Redis(host='localhost',port=63790)
 
 # Инициализируем хранилище (создаем экземпляр класса MemoryStorage)
 # storage = MemoryStorage()
