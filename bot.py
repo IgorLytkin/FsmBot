@@ -13,14 +13,12 @@ from aiogram.types import (CallbackQuery, InlineKeyboardButton,
 
 from config_data.config import Config, load_config
 
-# Вместо BOT TOKEN HERE нужно вставить токен вашего бота,
-    # полученный у @BotFather
-BOT_TOKEN = 'BOT TOKEN HERE'
-
 redis = Redis(host='localhost',port=6379)
 
 # Инициализируем хранилище (создаем экземпляр класса MemoryStorage)
 # storage = MemoryStorage()
+
+# Инициализируем хранилище (создаем экземпляр класса RedisStorage)
 storage = RedisStorage(redis=redis)
 
 logger = logging.getLogger(__name__)
