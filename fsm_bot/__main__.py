@@ -4,22 +4,22 @@ from aiogram import Bot, Dispatcher, F
 from aiogram.filters import Command, CommandStart, StateFilter
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import default_state, State, StatesGroup
-# from aiogram.fsm.storage.memory import MemoryStorage
-from aiogram.fsm.storage.redis import RedisStorage, Redis
+from aiogram.fsm.storage.memory import MemoryStorage
+# from aiogram.fsm.storage.redis import RedisStorage, Redis
 
 from aiogram.types import (CallbackQuery, InlineKeyboardButton,
                            InlineKeyboardMarkup, Message, PhotoSize,
                            BotCommand)
 
-from config_data.config import Config, load_config
+from fsm_bot.config_data.config import Config, load_config
 
-redis = Redis(host='localhost',port=6379)
+# redis = Redis(host='localhost',port=6379)
 
 # Инициализируем хранилище (создаем экземпляр класса MemoryStorage)
-# storage = MemoryStorage()
+storage = MemoryStorage()
 
 # Инициализируем хранилище (создаем экземпляр класса RedisStorage)
-storage = RedisStorage(redis=redis)
+# storage = RedisStorage(redis=redis)
 
 logger = logging.getLogger(__name__)
 dp = Dispatcher(storage=storage)
@@ -86,7 +86,7 @@ async def process_fillform_command(message: Message, state: FSMContext):
 # и переводить в состояние ожидания ввода возраста
 @dp.message(StateFilter(FSMFillForm.fill_name), F.text.isalpha())
 async def process_name_sent(message: Message, state: FSMContext):
-    # Cохраняем введенное имя в хранилище по ключу "name"
+    # Сохраняем введенное имя в хранилище по ключу "name"
     await state.update_data(name=message.text)
     await message.answer(text='Спасибо\n\nА теперь введите ваш возраст')
     # Устанавливаем состояние ожидания ввода возраста
@@ -109,7 +109,7 @@ async def warning_not_name(message: Message):
 @dp.message(StateFilter(FSMFillForm.fill_age),
             lambda x: x.text.isdigit() and 4 <= int(x.text) <= 120)
 async def process_age_sent(message: Message, state: FSMContext):
-    # Cохраняем возраст в хранилище по ключу "age"
+    # Сохраняем возраст в хранилище по ключу "age"
     await state.update_data(age=message.text)
     # Создаем объекты инлайн-кнопок
     male_button = InlineKeyboardButton(
@@ -156,7 +156,7 @@ async def warning_not_age(message: Message):
 @dp.callback_query(StateFilter(FSMFillForm.fill_gender),
                    F.data.in_(['male', 'female', 'undefined_gender']))
 async def process_gender_press(callback: CallbackQuery, state: FSMContext):
-    # Cохраняем пол (callback.data нажатой кнопки) в хранилище,
+    # Сохраняем пол (callback.data нажатой кнопки) в хранилище,
     # по ключу "gender"
     await state.update_data(gender=callback.data)
     # Удаляем сообщение с кнопками, потому что следующий этап - загрузка фото
@@ -236,7 +236,7 @@ async def warning_not_photo(message: Message):
 @dp.callback_query(StateFilter(FSMFillForm.fill_education),
                    F.data.in_(['secondary', 'higher', 'no_edu']))
 async def process_education_press(callback: CallbackQuery, state: FSMContext):
-    # Cохраняем данные об образовании по ключу "education"
+    # Сохраняем данные об образовании по ключу "education"
     await state.update_data(education=callback.data)
     # Создаем объекты инлайн-кнопок
     yes_news_button = InlineKeyboardButton(
@@ -278,7 +278,7 @@ async def warning_not_education(message: Message):
 @dp.callback_query(StateFilter(FSMFillForm.fill_wish_news),
                    F.data.in_(['yes_news', 'no_news']))
 async def process_wish_news_press(callback: CallbackQuery, state: FSMContext):
-    # Cохраняем данные о получении новостей по ключу "wish_news"
+    # Сохраняем данные о получении новостей по ключу "wish_news"
     await state.update_data(wish_news=callback.data == 'yes_news')
     # Добавляем в "базу данных" анкету пользователя
     # по ключу id пользователя
@@ -334,16 +334,18 @@ async def send_echo(message: Message):
     await message.reply(text='Извините, моя твоя не понимать')
 
 # Создаем асинхронную функцию
+
+
 async def set_main_menu(bot: Bot):
 
     # Создаем список с командами и их описанием для кнопки menu
     main_menu_commands = [
-        BotCommand(command='/start',description='Старт работы'),
-        BotCommand(command='/fillform',description='Заполнить анкету'),
+        BotCommand(command='/start', description='Старт работы'),
+        BotCommand(command='/fillform', description='Заполнить анкету'),
         BotCommand(command='/showdata', description='Показать данные'),
-        BotCommand(command='/help',description='Справка по работе бота'),
-        BotCommand(command='/support',description='Поддержка'),
-        BotCommand(command='/contacts',description='Другие способы связи'),
+        BotCommand(command='/help', description='Справка по работе бота'),
+        BotCommand(command='/support', description='Поддержка'),
+        BotCommand(command='/contacts', description='Другие способы связи'),
     ]
 
     await bot.set_my_commands(main_menu_commands)
@@ -364,7 +366,7 @@ if __name__ == '__main__':
     # Инициализируем бот и диспетчер
     bot = Bot(token=config.tg_bot.token, parse_mode='MarkdownV2')
 
-    # Регистрируем асинхронную функцию в диспетчере,которая будет выполняться на старте бота
+    # Регистрируем асинхронную функцию в диспетчере, которая будет выполняться на старте бота
     dp.startup.register(set_main_menu)
 
     dp.run_polling(bot)
