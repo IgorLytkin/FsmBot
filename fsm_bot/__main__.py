@@ -4,8 +4,8 @@ from aiogram import Bot, Dispatcher, F
 from aiogram.filters import Command, CommandStart, StateFilter
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import default_state, State, StatesGroup
-from aiogram.fsm.storage.memory import MemoryStorage
-# from aiogram.fsm.storage.redis import RedisStorage, Redis
+#from aiogram.fsm.storage.memory import MemoryStorage
+from aiogram.fsm.storage.redis import RedisStorage, Redis
 
 from aiogram.types import (CallbackQuery, InlineKeyboardButton,
                            InlineKeyboardMarkup, Message, PhotoSize,
@@ -13,13 +13,13 @@ from aiogram.types import (CallbackQuery, InlineKeyboardButton,
 
 from fsm_bot.config_data.config import Config, load_config
 
-# redis = Redis(host='localhost',port=6379)
+redis = Redis(host='localhost',port=6379)
 
 # Инициализируем хранилище (создаем экземпляр класса MemoryStorage)
-storage = MemoryStorage()
+# storage = MemoryStorage()
 
 # Инициализируем хранилище (создаем экземпляр класса RedisStorage)
-# storage = RedisStorage(redis=redis)
+storage = RedisStorage(redis=redis)
 
 logger = logging.getLogger(__name__)
 dp = Dispatcher(storage=storage)

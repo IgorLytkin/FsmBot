@@ -1,20 +1,38 @@
 version: '3.9'
 
 services:
-
+  redis:
+    image: redis:alpine
+    command: redis-server
+    env_file:
+      - ./.env
+    restart: on-failure
+    ports:
+      - 6379:6379
+  db:
+    image: postgres:16-alpine
+    env_file:
+      - ./.env
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    restart: on-failure
+    ports:
+        - 5434:5434
   fsm_bot:
         container_name: FsmBot
         image: fsm_bot
-
         build: .
-
         environment:
             - DEBUG=1
 
         volumes:
          - "/fsm_bot_data"
 
-        # restart: on-failure
+        restart: always
+        depends_on:
+          - redis
+          - db
 
 volumes:
+  pgdata:
   logs:
