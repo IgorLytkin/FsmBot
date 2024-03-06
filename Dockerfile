@@ -6,7 +6,6 @@ ENV PYTHONDONTWRITEBYTECODE 1   # to prevent python from writing bytecode
 
 WORKDIR /FsmBot
 COPY requirements.txt .
-RUN pip install -r --upgade setuptools
 RUN pip install --no-cache-dir -r ./requirements.txt
 RUN chmod 755 .
 
