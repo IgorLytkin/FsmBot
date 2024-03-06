@@ -4,7 +4,7 @@ from aiogram import Bot, Dispatcher, F
 from aiogram.filters import Command, CommandStart, StateFilter
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import default_state, State, StatesGroup
-#from aiogram.fsm.storage.memory import MemoryStorage
+# from aiogram.fsm.storage.memory import MemoryStorage
 from aiogram.fsm.storage.redis import RedisStorage, Redis
 
 from aiogram.types import (CallbackQuery, InlineKeyboardButton,
@@ -13,7 +13,7 @@ from aiogram.types import (CallbackQuery, InlineKeyboardButton,
 
 from fsm_bot.config_data.config import Config, load_config
 
-redis = Redis(host='localhost',port=6379)
+redis = Redis(host='localhost', port=6379)
 
 # Инициализируем хранилище (создаем экземпляр класса MemoryStorage)
 # storage = MemoryStorage()
@@ -311,7 +311,9 @@ async def warning_not_wish_news(message: Message):
 @dp.message(Command(commands='showdata'), StateFilter(default_state))
 async def process_showdata_command(message: Message):
     # Отправляем пользователю анкету, если она есть в "базе данных"
+    logger.debug("Отправляем пользователю анкету, если она есть в базе данных")
     if message.from_user.id in user_dict:
+        logger.debug(message.from_user.id)
         await message.answer_photo(
             photo=user_dict[message.from_user.id]['photo_id'],
             caption=f'Имя: {user_dict[message.from_user.id]["name"]}\n'
@@ -322,8 +324,10 @@ async def process_showdata_command(message: Message):
         )
     else:
         # Если анкеты пользователя в базе нет - предлагаем заполнить
+        logger.debug("Если анкеты пользователя в базе нет - предлагаем заполнить")
         await message.answer(
-            text='Вы еще не заполняли анкету. Чтобы приступить отправьте команду /fillform'
+            text='Вы еще не заполняли анкету! Чтобы приступить отправьте команду /fillform',
+            parse_mode='HTML'
         )
 
 
@@ -333,9 +337,8 @@ async def process_showdata_command(message: Message):
 async def send_echo(message: Message):
     await message.reply(text='Извините, моя твоя не понимать')
 
+
 # Создаем асинхронную функцию
-
-
 async def set_main_menu(bot: Bot):
 
     # Создаем список с командами и их описанием для кнопки menu
@@ -364,9 +367,8 @@ if __name__ == '__main__':
     config: Config = load_config()
 
     # Инициализируем бот и диспетчер
-    bot = Bot(token=config.tg_bot.token, parse_mode='MarkdownV2')
+    bot = Bot(token=config.tg_bot.token, parse_mode='HTML')
 
     # Регистрируем асинхронную функцию в диспетчере, которая будет выполняться на старте бота
     dp.startup.register(set_main_menu)
-
     dp.run_polling(bot)

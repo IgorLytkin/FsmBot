@@ -23,6 +23,7 @@ services:
         image: fsm_bot
         build: .
         environment:
+            - BOT_TOKEN=${BOT_TOKEN}
             - DEBUG=1
 
         volumes:
