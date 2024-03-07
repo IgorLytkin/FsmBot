@@ -326,8 +326,7 @@ async def process_showdata_command(message: Message):
         # Если анкеты пользователя в базе нет - предлагаем заполнить
         logger.debug("Если анкеты пользователя в базе нет - предлагаем заполнить")
         await message.answer(
-            text='Вы еще не заполняли анкету! Чтобы приступить отправьте команду /fillform',
-            parse_mode='HTML'
+            text='Вы еще не заполняли анкету! Чтобы приступить отправьте команду /fillform'
         )
 
 
