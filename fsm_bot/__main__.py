@@ -1,6 +1,7 @@
 import logging
 
 from aiogram import Bot, Dispatcher, F
+from aiogram.client.default import DefaultBotProperties
 from aiogram.filters import Command, CommandStart, StateFilter
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import default_state, State, StatesGroup
@@ -22,6 +23,7 @@ redis = Redis(host='localhost', port=6379)
 storage = RedisStorage(redis=redis)
 
 logger = logging.getLogger(__name__)
+logger.debug('Подготовка диспетчера')
 dp = Dispatcher(storage=storage)
 
 # Создаем "базу данных" пользователей
@@ -366,7 +368,7 @@ if __name__ == '__main__':
     config: Config = load_config()
 
     # Инициализируем бот и диспетчер
-    bot = Bot(token=config.tg_bot.token, parse_mode='HTML')
+    bot = Bot(token=config.tg_bot.token, default=DefaultBotProperties(parse_mode='HTML'))
 
     # Регистрируем асинхронную функцию в диспетчере, которая будет выполняться на старте бота
     dp.startup.register(set_main_menu)
