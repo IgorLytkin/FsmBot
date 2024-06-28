@@ -1,4 +1,4 @@
-FROM python:3.11.2-slim
+FROM python:3.12-slim-bullseye
 LABEL authors="Igor Lytkin"
 
 ENV PYTHONUNBUFFERED 1          # to prevent buffering stdout/stderr
