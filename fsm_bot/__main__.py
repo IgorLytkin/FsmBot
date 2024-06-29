@@ -136,8 +136,7 @@ async def process_age_sent(message: Message, state: FSMContext):
 
     # Добавляем кнопки в клавиатуру (две в одном ряду и одну в другом)
     keyboard: list[list[InlineKeyboardButton]] = [
-        [male_button, female_button],
-        []
+        [male_button, female_button]
     ]
     # Создаем объект инлайн-клавиатуры
     markup = InlineKeyboardMarkup(inline_keyboard=keyboard)
