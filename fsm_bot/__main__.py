@@ -47,6 +47,7 @@ class FSMFillForm(StatesGroup):
 # и предлагать перейти к заполнению анкеты, отправив команду /fillform
 @dp.message(CommandStart(), StateFilter(default_state))
 async def process_start_command(message: Message):
+    logger.debug('Обработка команды /start')
     await message.answer(
         text='Этот бот демонстрирует работу FSM\n\n'
              'Чтобы перейти к заполнению анкеты отправьте команду /fillform'
@@ -57,6 +58,7 @@ async def process_start_command(message: Message):
 # по умолчанию и сообщать, что эта команда работает внутри машины состояний
 @dp.message(Command(commands='cancel'), StateFilter(default_state))
 async def process_cancel_command(message: Message):
+    logger.debug('Обработка команды /cancel')
     await message.answer(
         text='Отменять нечего. Вы вне машины состояний\n\n'
              'Чтобы перейти к заполнению анкеты отправьте команду /fillform'
@@ -67,11 +69,13 @@ async def process_cancel_command(message: Message):
 # кроме состояния по умолчанию, и отключать машину состояний
 @dp.message(Command(commands='cancel'), ~StateFilter(default_state))
 async def process_cancel_command_state(message: Message, state: FSMContext):
+    logger.debug('Обработка команды /cancel (process_cancel_command_state)')
     await message.answer(
         text='Вы вышли из машины состояний\n\n'
              'Чтобы снова перейти к заполнению анкеты отправьте команду /fillform'
     )
     # Сбрасываем состояние и очищаем данные, полученные внутри состояний
+    logger.debug('Сбрасываем состояние и очищаем данные, полученные внутри состояний')
     await state.clear()
 
 
@@ -79,6 +83,7 @@ async def process_cancel_command_state(message: Message, state: FSMContext):
 # и переводить бота в состояние ожидания ввода имени
 @dp.message(Command(commands='fillform'), StateFilter(default_state))
 async def process_fillform_command(message: Message, state: FSMContext):
+    logger.debug('Обработка команды  /fillform')
     await message.answer(text='Пожалуйста, введите ваше имя')
     # Устанавливаем состояние ожидания ввода имени
     await state.set_state(FSMFillForm.fill_name)
@@ -88,8 +93,11 @@ async def process_fillform_command(message: Message, state: FSMContext):
 # и переводить в состояние ожидания ввода возраста
 @dp.message(StateFilter(FSMFillForm.fill_name), F.text.isalpha())
 async def process_name_sent(message: Message, state: FSMContext):
+    logger.debug('Ввведено корректное имя:' + message.text)
     # Сохраняем введенное имя в хранилище по ключу "name"
     await state.update_data(name=message.text)
+
+    # Переводим в состояние ожидания ввода возраста
     await message.answer(text='Спасибо\n\nА теперь введите ваш возраст')
     # Устанавливаем состояние ожидания ввода возраста
     await state.set_state(FSMFillForm.fill_age)
@@ -99,6 +107,7 @@ async def process_name_sent(message: Message, state: FSMContext):
 # будет введено что-то некорректное
 @dp.message(StateFilter(FSMFillForm.fill_name))
 async def warning_not_name(message: Message):
+    logger.debug('Введено некорректное имя: ' + message.text)
     await message.answer(
         text='То, что вы отправили не похоже на имя\n\n'
              'Пожалуйста, введите ваше имя\n\n'
@@ -111,8 +120,10 @@ async def warning_not_name(message: Message):
 @dp.message(StateFilter(FSMFillForm.fill_age),
             lambda x: x.text.isdigit() and 4 <= int(x.text) <= 120)
 async def process_age_sent(message: Message, state: FSMContext):
+    logger.debug('Введен корректный возраст: '  + message.text)
     # Сохраняем возраст в хранилище по ключу "age"
     await state.update_data(age=message.text)
+
     # Создаем объекты инлайн-кнопок
     male_button = InlineKeyboardButton(
         text='Мужской ♂',
@@ -120,16 +131,13 @@ async def process_age_sent(message: Message, state: FSMContext):
     )
     female_button = InlineKeyboardButton(
         text='Женский ♀',
-             callback_data='female'
+        callback_data='female'
     )
-    undefined_button = InlineKeyboardButton(
-        text='🤷 Пока не ясно',
-        callback_data='undefined_gender'
-    )
+
     # Добавляем кнопки в клавиатуру (две в одном ряду и одну в другом)
     keyboard: list[list[InlineKeyboardButton]] = [
         [male_button, female_button],
-        [undefined_button]
+        []
     ]
     # Создаем объект инлайн-клавиатуры
     markup = InlineKeyboardMarkup(inline_keyboard=keyboard)
@@ -146,6 +154,7 @@ async def process_age_sent(message: Message, state: FSMContext):
 # будет введено что-то некорректное
 @dp.message(StateFilter(FSMFillForm.fill_age))
 async def warning_not_age(message: Message):
+    logger.debug('Введен некорректный возраст: ' + message.text)
     await message.answer(
         text='Возраст должен быть целым числом от 4 до 120\n\n'
              'Попробуйте еще раз\n\nЕсли вы хотите прервать '
@@ -156,11 +165,13 @@ async def warning_not_age(message: Message):
 # Этот хэндлер будет срабатывать на нажатие кнопки при
 # выборе пола и переводить в состояние отправки фото
 @dp.callback_query(StateFilter(FSMFillForm.fill_gender),
-                   F.data.in_(['male', 'female', 'undefined_gender']))
+                   F.data.in_(['male', 'female']))
 async def process_gender_press(callback: CallbackQuery, state: FSMContext):
+    logger.debug('Выбран пол: ' + callback.data)
     # Сохраняем пол (callback.data нажатой кнопки) в хранилище,
     # по ключу "gender"
     await state.update_data(gender=callback.data)
+
     # Удаляем сообщение с кнопками, потому что следующий этап - загрузка фото
     # чтобы у пользователя не было желания тыкать кнопки
     await callback.message.delete()
@@ -175,6 +186,7 @@ async def process_gender_press(callback: CallbackQuery, state: FSMContext):
 # будет введено/отправлено что-то некорректное
 @dp.message(StateFilter(FSMFillForm.fill_gender))
 async def warning_not_gender(message: Message):
+    logger.debug('Введен некорректный пол: '+ message.text)
     await message.answer(
         text='Пожалуйста, пользуйтесь кнопками при выборе пола\n\n'
              'Если вы хотите прервать заполнение анкеты отправьте команду /cancel'
@@ -188,12 +200,14 @@ async def warning_not_gender(message: Message):
 async def process_photo_sent(message: Message,
                              state: FSMContext,
                              largest_photo: PhotoSize):
+    logger.debug('Фото загружено')
     # Cохраняем данные фото (file_unique_id и file_id) в хранилище
     # по ключам "photo_unique_id" и "photo_id"
     await state.update_data(
         photo_unique_id=largest_photo.file_unique_id,
         photo_id=largest_photo.file_id
     )
+
     # Создаем объекты инлайн-кнопок
     secondary_button = InlineKeyboardButton(
         text='Среднее',
@@ -227,6 +241,7 @@ async def process_photo_sent(message: Message,
 # будет введено/отправлено что-то некорректное
 @dp.message(StateFilter(FSMFillForm.upload_photo))
 async def warning_not_photo(message: Message):
+    logger.debug('Загружено некорретное фото!')
     await message.answer(
         text='Пожалуйста, на этом шаге отправьте ваше фото\n\n'
              'Если вы хотите прервать заполнение анкеты отправьте команду /cancel'
@@ -238,8 +253,10 @@ async def warning_not_photo(message: Message):
 @dp.callback_query(StateFilter(FSMFillForm.fill_education),
                    F.data.in_(['secondary', 'higher', 'no_edu']))
 async def process_education_press(callback: CallbackQuery, state: FSMContext):
+    logger.debug('Образование выбрано ' + callback.data)
     # Сохраняем данные об образовании по ключу "education"
     await state.update_data(education=callback.data)
+
     # Создаем объекты инлайн-кнопок
     yes_news_button = InlineKeyboardButton(
         text='Да',
@@ -269,6 +286,7 @@ async def process_education_press(callback: CallbackQuery, state: FSMContext):
 # будет введено/отправлено что-то некорректное
 @dp.message(StateFilter(FSMFillForm.fill_education))
 async def warning_not_education(message: Message):
+    logger.debug('Образование не выбрано!')
     await message.answer(
         text='Пожалуйста, пользуйтесь кнопками при выборе образования\n\n'
              'Если вы хотите прервать заполнение анкеты отправьте команду /cancel'
@@ -280,6 +298,7 @@ async def warning_not_education(message: Message):
 @dp.callback_query(StateFilter(FSMFillForm.fill_wish_news),
                    F.data.in_(['yes_news', 'no_news']))
 async def process_wish_news_press(callback: CallbackQuery, state: FSMContext):
+    logger.debug('Вы выбрали получать или не получать новости:' + callback.data)
     # Сохраняем данные о получении новостей по ключу "wish_news"
     await state.update_data(wish_news=callback.data == 'yes_news')
     # Добавляем в "базу данных" анкету пользователя
@@ -302,6 +321,7 @@ async def process_wish_news_press(callback: CallbackQuery, state: FSMContext):
 # новостей будет введено/отправлено что-то некорректное
 @dp.message(StateFilter(FSMFillForm.fill_wish_news))
 async def warning_not_wish_news(message: Message):
+    logger.debug('Получение новостей не выбрано!')
     await message.answer(
         text='Пожалуйста, воспользуйтесь кнопками\n\n'
              'Если вы хотите прервать заполнение анкеты отправьте команду /cancel'
@@ -341,7 +361,7 @@ async def send_echo(message: Message):
 
 # Создаем асинхронную функцию
 async def set_main_menu(bot: Bot):
-
+    logger.debug('Создаем асинхронную функцию, которая будет выполняться на старте бота')
     # Создаем список с командами и их описанием для кнопки menu
     main_menu_commands = [
         BotCommand(command='/start', description='Старт работы'),
@@ -353,6 +373,8 @@ async def set_main_menu(bot: Bot):
     ]
 
     await bot.set_my_commands(main_menu_commands)
+
+
 # Запускаем поллинг
 if __name__ == '__main__':
     # Конфигурируем логирование
@@ -366,10 +388,17 @@ if __name__ == '__main__':
 
     # Загружаем конфиг в переменную config
     config: Config = load_config()
+    logger.debug('Загружен конфиг')
 
     # Инициализируем бот и диспетчер
+    logger.debug('Инициализируем бот')
     bot = Bot(token=config.tg_bot.token, default=DefaultBotProperties(parse_mode='HTML'))
+    logger.debug('Бот инициализирован')
 
     # Регистрируем асинхронную функцию в диспетчере, которая будет выполняться на старте бота
     dp.startup.register(set_main_menu)
+    logger.debug('dp.startup.register(set_main_menu)')
+
+    logger.debug('Запускаем диспетчер')
     dp.run_polling(bot)
+    logger.debug('Диспетчер запущен')
