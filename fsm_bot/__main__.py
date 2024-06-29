@@ -14,7 +14,7 @@ from aiogram.types import (CallbackQuery, InlineKeyboardButton,
 
 from fsm_bot.config_data.config import Config, load_config
 
-redis = Redis(host='localhost', port=6379)
+redis = Redis(host='fsmbot-redis', port=6379)
 
 # Инициализируем хранилище (создаем экземпляр класса MemoryStorage)
 # storage = MemoryStorage()
